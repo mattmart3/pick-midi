@@ -8,6 +8,8 @@ SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
 EXECUTABLE := pick-midi
 
+NOTE_FINDER := fft_note_finder
+
 all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OUTDIR) $(OBJECTS) 
@@ -16,6 +18,9 @@ $(EXECUTABLE): $(OUTDIR) $(OBJECTS)
 	
 $(OUTDIR):
 	mkdir $(OUTDIR)
+
+$(NOTE_FINDER):
+	$(CC) $(SRCDIR)/$(NOTE_FINDER).c -o $(OUTDIR)/$(NOTE_FINDER) $(LDFLAGS)
 
 .o:
 	$(CC) $(CFLAGS) $< -o $@
