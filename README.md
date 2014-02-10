@@ -1,4 +1,4 @@
 pick-midi
 =========
 
-Guitar to MIDI converter.
+A guitar to MIDI converter.
