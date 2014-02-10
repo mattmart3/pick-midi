@@ -23,6 +23,6 @@
 #define FFT_H
 #include "defs.h"
 
-int fft(byte_t *buf, ssize_t fft_size);
+ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout);
 
 #endif

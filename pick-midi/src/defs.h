@@ -24,5 +24,6 @@
 
 
 typedef char byte_t;
+typedef float freq_t;
 
 #endif

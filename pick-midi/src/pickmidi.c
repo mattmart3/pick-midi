@@ -30,15 +30,28 @@
 
 /* PickMidi Headers */
 #include "fft.h"
+#include "fft_note_finder.h"
 #include "const.h"
 #include "defs.h"
 
+/* Return the index where there is the peak frequency */
+int getMax(ssize_t size, double *invec)
+{
+	int max=0;
+	int i;
+	for(i=0;i<size;i++)
+		if(invec[i]>invec[max])
+			max=i;
+	return max;
+}
 
 int main(int argc, char **argv){
-	ssize_t b_read=0;
+	ssize_t b_read = 0, fft_size;
 	int fd;
-	byte_t buf[FFT_SAMPLE_RATE];
-
+	byte_t buf[FFT_SAMPLE_RATE], note;
+	double *fft_out;
+	freq_t max;
+	
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
@@ -50,9 +63,11 @@ int main(int argc, char **argv){
 	}
 	
 	close(fd);
-
 	/* Perform a FFT of size b_read, with buf as input data */ 
-	fft(buf, b_read);
+	fft_size = fft(buf, b_read, &fft_out);
+	max = (freq_t)getMax(fft_size, fft_out);
+	note = getNote(max);
+	printf("%x\n", note); 
 	
 	/* TODO: read the TODO file */
 	

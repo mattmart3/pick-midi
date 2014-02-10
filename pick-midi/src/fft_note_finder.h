@@ -19,14 +19,9 @@
  * along with pick-midi. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONST_H
-#define CONST_H
+#ifndef FFT_NOTE_FINDER_H
+#define FFT_NOTE_FINDER_H
 
-#define FFT_BASE_RATE	44100
-#define FFT_SAMPLE_RATE 	44100
-#define MIDI_C1			24
-#define N_SEMITONES		12
-#define SAMPLE_OCTAVE_HARDLIMIT 8
-
+byte_t getNote(float freq);
 
 #endif

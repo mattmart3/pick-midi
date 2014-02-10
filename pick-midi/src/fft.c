@@ -25,19 +25,22 @@
 #include <math.h>
 #include <complex.h>
 #include <fftw3.h>
+#include <strings.h>
 
 /* PickMidi Headers */
 #include "const.h"
 #include "defs.h"
 
-int fft(byte_t *buf, ssize_t fft_size){
+ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	unsigned i=0;
 	double *in;
+	ssize_t out_size = fft_size / 2 + 1;
 	fftw_complex *out;
 	fftw_plan p1;
 	
 	in=(double*) fftw_malloc(sizeof(double) * fft_size);
-	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (fft_size/2+1));
+	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * out_size);
+	(*rout) = (double *)fftw_malloc(sizeof(double) * out_size);
 
 	for(i=0;i<fft_size;i++)
 	{
@@ -46,23 +49,19 @@ int fft(byte_t *buf, ssize_t fft_size){
 
 	/* warp to the complex plane */
 	p1=fftw_plan_dft_r2c_1d(fft_size, in, out, FFTW_ESTIMATE);
-	{
-		int repeat;
-		for(repeat=0;repeat<FFT_REPETITIONS;repeat++)
-			fftw_execute(p1);
-	}
+	
+	fftw_execute(p1);
 
-	for(i=0;i<fft_size/2;i++)
+	int nc=((int)FFT_BASE_RATE/(int)FFT_SAMPLE_RATE);
+	bzero(*rout, out_size);
+	for(i = 0; i < out_size; i++)
 	{
-		double val=fabs(cimag(out[i])*creal(out[i]));
-		printf("%f\n", val);
-		int k;
-		for(k=0;k<FFT_BASE_RATE/FFT_SAMPLE_RATE-1;k++)
-			printf("0.0\n");
+//		printf("setting %d\n", i*nc);
+		(*rout)[i*nc]=fabs(cimag(out[i])*creal(out[i]));	
 	}
 
 	fftw_destroy_plan(p1);
 	fftw_free(out);
 	free(in);
-	return 0;
+	return out_size;
 }
