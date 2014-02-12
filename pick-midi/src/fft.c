@@ -53,11 +53,13 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	bzero(*rout, out_size);
 	for(i = 0; i < out_size; i++)
 	{
-		//printf("setting %d\n", i*nc);
 		(*rout)[i*nc]=fabs(cimag(out[i])*creal(out[i]));
+#ifdef FFT_DEBUG
+		printf("%d : %f\n", i*nc, (*rout)[i*nc]);
+#endif
 	}
 	fftw_destroy_plan(p1);
 	fftw_free(out);
 	free(in);
-	return out_size;
+	return out_size*nc;
 }
