@@ -37,11 +37,14 @@
 /* Return the index where there is the peak frequency */
 int getMax(ssize_t size, double *invec)
 {
+	printf("called getmax\n");
 	int max=0;
 	int i;
 	for(i=0;i<size;i++)
 		if(invec[i]>invec[max])
+		{
 			max=i;
+		}
 	return max;
 }
 
@@ -66,6 +69,11 @@ int main(int argc, char **argv){
 	/* Perform a FFT of size b_read, with buf as input data */ 
 	fft_size = fft(buf, b_read, &fft_out);
 	max = (freq_t)getMax(fft_size, fft_out);
+
+#ifdef FFT_DEBUG
+	printf("max: %f fft_size: %d\n", max, fft_size);
+#endif
+
 	note = getNote(max);
 	printf("%x\n", note); 
 	

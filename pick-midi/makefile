@@ -12,6 +12,10 @@ NOTE_FINDER := fft_note_finder
 
 all: $(SOURCES) $(EXECUTABLE)
 	
+#debug entry
+debug: CFLAGS+=-DFFT_DEBUG
+debug: clean all
+
 $(EXECUTABLE): $(OUTDIR) $(OBJECTS) 
 	$(CC) -o $(OUTDIR)/$@ $(OBJECTS) $(LDFLAGS) 
 	rm $(OBJECTS)
