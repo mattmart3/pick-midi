@@ -38,28 +38,24 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	fftw_complex *out;
 	fftw_plan p1;
 	
+	int nc=((int)FFT_BASE_RATE/(int)FFT_SAMPLE_RATE);
 	in=(double*) fftw_malloc(sizeof(double) * fft_size);
 	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * out_size);
-	(*rout) = (double *)fftw_malloc(sizeof(double) * out_size);
-
-	for(i=0;i<fft_size;i++)
+	(*rout) = (double *)fftw_malloc(sizeof(double) * out_size * nc);
+		for(i=0;i<fft_size;i++)
 	{
 		in[i]=(double)(buf[i]&0xff);
 	}
-
 	/* warp to the complex plane */
 	p1=fftw_plan_dft_r2c_1d(fft_size, in, out, FFTW_ESTIMATE);
-	
 	fftw_execute(p1);
-
-	int nc=((int)FFT_BASE_RATE/(int)FFT_SAMPLE_RATE);
+	
 	bzero(*rout, out_size);
 	for(i = 0; i < out_size; i++)
 	{
-//		printf("setting %d\n", i*nc);
-		(*rout)[i*nc]=fabs(cimag(out[i])*creal(out[i]));	
+		//printf("setting %d\n", i*nc);
+		(*rout)[i*nc]=fabs(cimag(out[i])*creal(out[i]));
 	}
-
 	fftw_destroy_plan(p1);
 	fftw_free(out);
 	free(in);
