@@ -37,6 +37,7 @@
 /* Return the index where there is the peak frequency */
 int getMax(ssize_t size, double *invec)
 {
+	printf("called getmax\n");
 	int max=0;
 	int i;
 	for(i=0;i<size;i++)
