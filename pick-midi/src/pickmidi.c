@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <strings.h>
 
 /* PickMidi Headers */
 #include "fft.h"
@@ -34,48 +35,52 @@
 #include "const.h"
 #include "defs.h"
 
-/* Return the index where there is the peak frequency */
-int getMax(ssize_t size, double *invec)
-{
-	int max=0;
-	int i;
-	for(i=0;i<size;i++)
-		if(invec[i]>invec[max])
-		{
-			max=i;
-		}
-	return max;
-}
-
 int main(int argc, char **argv){
 	ssize_t b_read = 0, fft_size;
-	int fd;
+	int fd, peak_idx;
 	byte_t buf[FFT_SAMPLE_RATE], note;
-	double *fft_out;
-	freq_t max;
+	double *fft_out, peak_intensity;
+	freq_t peak;
+	
 	
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
 	}
 	
-	if ((b_read=read(fd, buf, FFT_SAMPLE_RATE)) == -1){
+	while((b_read=read(fd, buf, FFT_SAMPLE_RATE)) > 0){
+		/* Perform a FFT of size b_read, with buf as input data,
+		 * fftPeak return an index of the fft retult array corresponding 
+		 * to the resulting peak frequency. */ 
+		fft_size = fft(buf, b_read, &fft_out);
+		peak_idx = fftPeak(fft_size, fft_out);
+		peak_intensity = fft_out[peak_idx];
+		peak = (freq_t)peak_idx;
+#ifdef FFT_DEBUG
+	printf("peak: %f fft_size: %d\n peak_intensity: %f", peak, fft_size, peak_intensity);
+#endif
+				
+		/* TODO: Map the frequency intensity to the MIDI velocity 
+		 * (Is it correct?) At least to understand if any note is playing. */ 
+		if(peak_intensity < INTENSITY_THRESHOLD){ 
+			printf("No note\n");
+			continue;
+		}
+		
+		note = getNote(peak);
+		
+		printf("Note %x\n", note); 	
+		
+		/* Clean the buffers */
+		bzero((void *)buf, FFT_SAMPLE_RATE);
+		bzero((void *)fft_out, fft_size);
+		peak_idx = peak_intensity = 0;
+	}
+	if (b_read == -1){
 		perror("read ");
 		exit(EXIT_FAILURE);
 	}
-	
 	close(fd);
-	/* Perform a FFT of size b_read, with buf as input data */ 
-	fft_size = fft(buf, b_read, &fft_out);
-	max = (freq_t)getMax(fft_size, fft_out);
-
-#ifdef FFT_DEBUG
-	printf("max: %f fft_size: %d\n", max, fft_size);
-#endif
-
-	note = getNote(max);
-	printf("%x\n", note); 
-	
 	/* TODO: read the TODO file */
 	
 	return 0;

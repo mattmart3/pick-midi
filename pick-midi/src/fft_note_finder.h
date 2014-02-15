@@ -22,6 +22,8 @@
 #ifndef FFT_NOTE_FINDER_H
 #define FFT_NOTE_FINDER_H
 
+/* Return the corresponding MIDI Note given a certain frequency */
 byte_t getNote(float freq);
+
 
 #endif

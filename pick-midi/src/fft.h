@@ -23,6 +23,12 @@
 #define FFT_H
 #include "defs.h"
 
+/* Perorm a FFT using the fftw3 library.
+ * The input data are stored in the buf buffer, which is fft_size bytes big
+ * and the result is stored in the rout buffer. */
 ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout);
+
+/* Return the index where there is the peak frequency */
+int fftPeak(ssize_t size, double *invec);
 
 #endif

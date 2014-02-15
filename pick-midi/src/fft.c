@@ -31,6 +31,20 @@
 #include "const.h"
 #include "defs.h"
 
+/* Return the index where there is the peak frequency */
+int fftPeak(ssize_t size, double *invec)
+{
+	int max=0;
+	int i;
+	for(i=0;i<size;i++)
+		if(invec[i]>invec[max])
+		{
+			max=i;
+			
+		}
+	return max;
+}
+
 ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	unsigned i=0;
 	double *in;

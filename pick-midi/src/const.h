@@ -23,10 +23,10 @@
 #define CONST_H
 
 #define FFT_BASE_RATE	44100
-#define FFT_SAMPLE_RATE 1000
+#define FFT_SAMPLE_RATE 	1000
 #define MIDI_C1			24
 #define N_SEMITONES		12
 #define SAMPLE_OCTAVE_HARDLIMIT 8
-
+#define INTENSITY_THRESHOLD	200000  /* Need to find an appropriate value */
 
 #endif
