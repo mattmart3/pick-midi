@@ -52,10 +52,10 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	fftw_plan p1;
 	
 	int nc=((int)FFT_BASE_RATE/(int)FFT_SAMPLE_RATE);
-	in=(double*) fftw_malloc(sizeof(double) * fft_size);
-	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * out_size);
+	in=(double*) fftw_malloc(sizeof(double) * (size_t)fft_size);
+	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (size_t)out_size);
 	
-	(*rout) = (double *)fftw_malloc(sizeof(double) * out_size * nc);
+	(*rout) = (double *)fftw_malloc(sizeof(double) * (size_t)(out_size * nc));
 		for(i=0;i<fft_size;i++)
 	{
 		in[i]=(double)(buf[i]&0xff);
@@ -64,7 +64,7 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	p1=fftw_plan_dft_r2c_1d((int)fft_size, in, out, FFTW_ESTIMATE);
 	fftw_execute(p1);
 	
-	bzero(*rout, out_size);
+	bzero(*rout, (size_t)out_size);
 	for(i = 0; i < out_size; i++)
 	{
 		(*rout)[i*nc] = GetFrequencyIntensity(creal(out[i]), cimag(out[i]));
