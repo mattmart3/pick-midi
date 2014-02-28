@@ -50,7 +50,6 @@ int getOctaveFrom(double freq, int soctave)
 	}
 	else
 	{
-		printf("in the else!\n"); /* TODO: What's happening here? */ 
 		int i;
 		refFreqStart=refFreq[SAMPLE_OCTAVE_HARDLIMIT-1];
 		for(i=0;i<soctave-SAMPLE_OCTAVE_HARDLIMIT-1;i++)
@@ -93,14 +92,13 @@ char getMidiToneOf(float freq, int octave)
 		29.14	/*A#0*/,
 		30.87	/*B0*/,
 	};
-	
+	int t;
 	float reffreq=freq;
 	int i;
 	for(i=0;i<octave;i++)
 		reffreq=reffreq/2;
-	//printf("%f\n", reffreq);
 
-	int t=getSimilar((N_SEMITONES - 1)/2, references, reffreq);
+	t=getSimilar((N_SEMITONES - 1)/2, references, reffreq);
 	return (char)(t + MIDI_C1);
 }
 
@@ -109,7 +107,6 @@ byte_t getNote(freq_t freq)
 	int octave, tone;
 	
 	octave = getOctaveFrom(freq, 4);
-	//printf("octave: %d\n", out.octave);
 	tone = getMidiToneOf(freq, octave);
 	return (byte_t) (tone + N_SEMITONES * (octave - 1));
 }

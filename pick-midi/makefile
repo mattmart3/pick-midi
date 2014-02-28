@@ -2,7 +2,7 @@ CC=gcc
 
 SRCDIR := src
 OUTDIR := bin
-CFLAGS := -c -Wall -Wconversion
+CFLAGS := -c -Wall -Wconversion --pedantic
 LDFLAGS := -lm -lfftw3
 SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
