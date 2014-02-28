@@ -57,9 +57,10 @@ int main(int argc, char **argv){
 		peak_intensity = fft_out[peak_idx];
 		peak = (freq_t)peak_idx;
 #ifdef FFT_DEBUG
-	printf("peak: %f fft_size: %d\n peak_intensity: %f", peak, fft_size, peak_intensity);
+	printf("peak: %f fft_size: %d peak_intensity: %f", peak, fft_size, peak_intensity);
 #endif
-				
+		printf("peak: %f fft_size: %d peak_intensity: %f", peak, fft_size, peak_intensity);
+	
 		/* TODO: Map the frequency intensity to the MIDI velocity 
 		 * (Is it correct?) At least to understand if any note is playing. */ 
 		if(peak_intensity < INTENSITY_THRESHOLD){ 

@@ -34,19 +34,18 @@
 /* Return the index where there is the peak frequency */
 int fftPeak(ssize_t size, double *invec)
 {
-	int max=0;
+	int max=HIGH_PASS_FILTER_START;
 	int i;
-	for(i=0;i<size;i++)
+	for(i=HIGH_PASS_FILTER_START;i<size;i++) /* TODO: think about a filter instead */
 		if(invec[i]>invec[max])
 		{
 			max=i;
-			
 		}
 	return max;
 }
 
 ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
-	unsigned i=0;
+	int i=0;
 	double *in;
 	ssize_t out_size = fft_size / 2 + 1;
 	fftw_complex *out;
@@ -55,23 +54,24 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	int nc=((int)FFT_BASE_RATE/(int)FFT_SAMPLE_RATE);
 	in=(double*) fftw_malloc(sizeof(double) * fft_size);
 	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * out_size);
+	
 	(*rout) = (double *)fftw_malloc(sizeof(double) * out_size * nc);
 		for(i=0;i<fft_size;i++)
 	{
 		in[i]=(double)(buf[i]&0xff);
 	}
 	/* warp to the complex plane */
-	p1=fftw_plan_dft_r2c_1d(fft_size, in, out, FFTW_ESTIMATE);
+	p1=fftw_plan_dft_r2c_1d((int)fft_size, in, out, FFTW_ESTIMATE);
 	fftw_execute(p1);
 	
 	bzero(*rout, out_size);
 	for(i = 0; i < out_size; i++)
 	{
-		(*rout)[i*nc]=fabs(cimag(out[i])*creal(out[i]));
+		(*rout)[i*nc] = GetFrequencyIntensity(creal(out[i]), cimag(out[i]));
+	}
 #ifdef FFT_DEBUG
 		printf("%d : %f\n", i*nc, (*rout)[i*nc]);
 #endif
-	}
 	fftw_destroy_plan(p1);
 	fftw_free(out);
 	free(in);

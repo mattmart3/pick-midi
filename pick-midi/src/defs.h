@@ -21,9 +21,17 @@
 
 #ifndef DEFS_H
 #define DEFS_H
+#include <math.h>
 
 
 typedef char byte_t;
 typedef float freq_t;
+
+#define GetFrequencyIntensity(re, im) (sqrt((re*re)+(im*im)))
+#define mag_sqrd(re,im) (re*re+im*im)
+#define Decibels(re,im) ((re == 0 && im == 0) ? (0) : \
+		10.0 * log10(double(mag_sqrd(re,im))))
+#define Amplitude(re,im,len) (GetFrequencyIntensity(re,im)/(len))
+#define AmplitudeScaled(re,im,len,scale) ((int)Amplitude(re,im,len)%scale)
 
 #endif

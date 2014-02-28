@@ -2,7 +2,7 @@ CC=gcc
 
 SRCDIR := src
 OUTDIR := bin
-CFLAGS := -c -Wall
+CFLAGS := -c -Wall -Wconversion
 LDFLAGS := -lm -lfftw3
 SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
@@ -31,3 +31,4 @@ $(NOTE_FINDER):
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -f $(SRCDIR)/*.o
