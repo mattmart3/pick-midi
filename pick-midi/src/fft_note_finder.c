@@ -30,7 +30,7 @@
 #include "const.h"
 #include "defs.h"
 
-int getOctaveFrom(float freq, int soctave)
+int getOctaveFrom(double freq, int soctave)
 {
 	float refFreq[SAMPLE_OCTAVE_HARDLIMIT]={
 		16.0		/*C0*/,
@@ -50,7 +50,6 @@ int getOctaveFrom(float freq, int soctave)
 	}
 	else
 	{
-		printf("in the else!\n"); /* TODO: What's happening here? */ 
 		int i;
 		refFreqStart=refFreq[SAMPLE_OCTAVE_HARDLIMIT-1];
 		for(i=0;i<soctave-SAMPLE_OCTAVE_HARDLIMIT-1;i++)
@@ -66,7 +65,7 @@ int getOctaveFrom(float freq, int soctave)
 }
 
 
-int getSimilar(int ind, float *references, float ref)
+int getSimilar(int ind, double *references, float ref)
 {
 	if(ref-references[ind] < 1 && ref-references[ind] > -1)
 		return ind;
@@ -79,7 +78,7 @@ int getSimilar(int ind, float *references, float ref)
 char getMidiToneOf(float freq, int octave)
 {
 	/* TODO: do it kinldy :D */
-	float references[N_SEMITONES]={
+	double references[N_SEMITONES]={
 		16.35	/*C0*/,
 		17.32	/*C#0*/,
 		18.35	/*D0*/,
@@ -93,18 +92,14 @@ char getMidiToneOf(float freq, int octave)
 		29.14	/*A#0*/,
 		30.87	/*B0*/,
 	};
-	
-	char out;
-	
+	int t;
 	float reffreq=freq;
 	int i;
 	for(i=0;i<octave;i++)
 		reffreq=reffreq/2;
-	//printf("%f\n", reffreq);
 
-	int t=getSimilar((N_SEMITONES - 1)/2, references, reffreq);
-	return (t + MIDI_C1);
-	return out;
+	t=getSimilar((N_SEMITONES - 1)/2, references, reffreq);
+	return (char)(t + MIDI_C1);
 }
 
 byte_t getNote(freq_t freq)
@@ -112,7 +107,6 @@ byte_t getNote(freq_t freq)
 	int octave, tone;
 	
 	octave = getOctaveFrom(freq, 4);
-	//printf("octave: %d\n", out.octave);
 	tone = getMidiToneOf(freq, octave);
 	return (byte_t) (tone + N_SEMITONES * (octave - 1));
 }

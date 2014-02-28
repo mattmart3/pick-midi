@@ -74,8 +74,9 @@ int main(int argc, char **argv){
 		
 		/* Clean the buffers */
 		bzero((void *)buf, FFT_SAMPLE_RATE);
-		bzero((void *)fft_out, fft_size);
-		peak_idx = peak_intensity = 0;
+		bzero((void *)fft_out, (size_t)fft_size);
+		peak_idx = 0;
+		peak_intensity=0.0;
 	}
 	if (b_read == -1){
 		perror("read ");
