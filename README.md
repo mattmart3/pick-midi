@@ -4,6 +4,6 @@ pick-midi
 A guitar to MIDI converter.
 
 
-Installation
+##Installation
 
 Use the setup.sh script.
