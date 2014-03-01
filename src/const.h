@@ -23,7 +23,7 @@
 #define CONST_H
 
 #define FFT_BASE_RATE	44100
-#define FFT_SAMPLE_RATE 	882
+#define FFT_SAMPLE_RATE 	4410
 #define MIDI_C1			24
 #define N_SEMITONES		12
 #define SAMPLE_OCTAVE_HARDLIMIT 8

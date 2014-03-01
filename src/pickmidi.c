@@ -38,15 +38,19 @@
 int main(int argc, char **argv){
 	ssize_t b_read = 0, fft_size;
 	int fd, peak_idx;
+	short int skip;
 	byte_t buf[FFT_SAMPLE_RATE], note;
-	double *fft_out, peak_intensity;
-	freq_t peak;
+	double *fft_out, peak_intensity, last_peak_intensity;
+	freq_t peak, last_peak;
 	
 	
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
 	}
+	
+	last_peak = skip = 0;
+	last_peak_intensity = 50000;
 	
 	while((b_read=read(fd, buf, FFT_SAMPLE_RATE)) > 0){
 		/* Perform a FFT of size b_read, with buf as input data,
@@ -59,23 +63,26 @@ int main(int argc, char **argv){
 #ifdef FFT_DEBUG
 	printf("peak: %f fft_size: %d peak_intensity: %f", peak, fft_size, peak_intensity);
 #endif
-		printf("peak: %f fft_size: %d peak_intensity: %f", peak, fft_size, peak_intensity);
 	
 		/* TODO: Map the frequency intensity to the MIDI velocity 
 		 * (Is it correct?) At least to understand if any note is playing. */ 
-		if(peak_intensity < INTENSITY_THRESHOLD){ 
-			printf("No note\n");
-			continue;
+		if(peak_intensity < INTENSITY_THRESHOLD || 
+			(last_peak == peak /*&& last_peak_intensity >= peak_intensity TODO:map needed before*/)){ 
+			skip = 1;
 		}
 		
-		note = getNote(peak);
+		if(skip == 0){
+			note = getNote(peak);
+			printf("Note (hex: %x, dec: %d, freq: %d)\n", note, (int)note, peak_idx); 
+			/* TODO: play the note here */	
+		}
 		
-		printf("Note %x\n", note); 	
-		
-		/* Clean the buffers */
+		/* Save peak history and clean the buffers */
+		last_peak = peak;
+		last_peak_intensity = peak_intensity;
 		bzero((void *)buf, FFT_SAMPLE_RATE);
 		bzero((void *)fft_out, (size_t)fft_size);
-		peak_idx = 0;
+		peak_idx = skip = 0;
 		peak_intensity=0.0;
 	}
 	if (b_read == -1){

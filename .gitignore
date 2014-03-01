@@ -25,3 +25,5 @@
 #Vim swap files
 *.swp
 *.swo
+data
+bin

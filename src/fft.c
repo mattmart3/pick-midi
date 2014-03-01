@@ -31,6 +31,13 @@
 #include "const.h"
 #include "defs.h"
 
+#define GetFrequencyIntensity(re, im) (sqrt((re*re)+(im*im)))
+#define mag_sqrd(re,im) (re*re+im*im)
+#define Decibels(re,im) ((re == 0 && im == 0) ? (0) : \
+		10.0 * log10(double(mag_sqrd(re,im))))
+#define Amplitude(re,im,len) (GetFrequencyIntensity(re,im)/(len))
+#define AmplitudeScaled(re,im,len,scale) ((int)Amplitude(re,im,len)%scale)
+
 /* Return the index where there is the peak frequency */
 int fftPeak(ssize_t size, double *invec)
 {
@@ -44,7 +51,7 @@ int fftPeak(ssize_t size, double *invec)
 	return max;
 }
 
-ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
+ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout, int *peak){
 	int i=0;
 	double *in;
 	ssize_t out_size = fft_size / 2 + 1;
@@ -56,7 +63,7 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (size_t)out_size);
 	
 	(*rout) = (double *)fftw_malloc(sizeof(double) * (size_t)(out_size * nc));
-		for(i=0;i<fft_size;i++)
+	for(i=0;i<fft_size;i++)
 	{
 		in[i]=(double)(buf[i]&0xff);
 	}
@@ -67,7 +74,9 @@ ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout){
 	bzero(*rout, (size_t)out_size);
 	for(i = 0; i < out_size; i++)
 	{
+		/* TODO: perform the max directly here */
 		(*rout)[i*nc] = GetFrequencyIntensity(creal(out[i]), cimag(out[i]));
+
 	}
 #ifdef FFT_DEBUG
 		printf("%d : %f\n", i*nc, (*rout)[i*nc]);
