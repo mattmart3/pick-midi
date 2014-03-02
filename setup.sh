@@ -25,7 +25,6 @@ then
 fi
 
 cd $BUILD_DIR
-echo $PICKMIDI_DIR
 cmake $PICKMIDI_DIR
 make all
-cp "PickMidi" $BIN_DIR
+cp $BIN_NAME $BIN_DIR
