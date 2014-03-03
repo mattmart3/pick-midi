@@ -65,7 +65,7 @@ int getOctaveFrom(float freq, int soctave)
 }
 
 
-int getSimilar(int ind, double *references, float ref)
+int getSimilar(int ind, float *references, float ref)
 {
 	float dist = ref-references[ind];
 	
@@ -95,7 +95,7 @@ int getSimilar(int ind, double *references, float ref)
 char getMidiToneOf(float freq, int octave)
 {
 	/* TODO: do it kinldy :D */
-	double references[N_SEMITONES]={
+	float references[N_SEMITONES]={
 		16.35	/*C0*/,
 		17.32	/*C#0*/,
 		18.35	/*D0*/,
