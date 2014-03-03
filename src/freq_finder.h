@@ -18,17 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with pick-midi. If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef FREQ_FINDER_H
+#define FREQ_FINDER_H
 
-#ifndef FFT_H
-#define FFT_H
-#include "defs.h"
-
-/* Perorm a FFT using the fftw3 library.
- * The input data are stored in the buf buffer, which is fft_size bytes big
- * and the result is stored in the rout buffer. */
-ssize_t fft(byte_t *buf, ssize_t fft_size, double **rout);
-
-/* Return the index where there is the peak frequency */
-int fftPeak(ssize_t size, double *invec);
+/* Find the frequency of a certain sin wave interval.
+ * It's based on the Schmitt trigger algorithm. */
+freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak);
 
 #endif

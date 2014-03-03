@@ -30,60 +30,47 @@
 #include <strings.h>
 
 /* PickMidi Headers */
-#include "fft.h"
-#include "fft_note_finder.h"
 #include "const.h"
 #include "defs.h"
+#include "freq_finder.h"
+#include "note_finder.h"
+
 
 int main(int argc, char **argv){
 	ssize_t b_read = 0, fft_size;
-	int fd, peak_idx;
+	int fd;
 	short int skip;
-	byte_t buf[FFT_SAMPLE_RATE], note;
-	double *fft_out, peak_intensity, last_peak_intensity;
-	freq_t peak, last_peak;
-	
+	byte_t buf[WINDOW_RATE], 
+		note, peak, last_peak;
+	freq_t freq, last_freq;
 	
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
 	}
 	
+	/* Variables initialization */
 	last_peak = skip = 0;
-	last_peak_intensity = 50000;
 	
-	while((b_read=read(fd, buf, FFT_SAMPLE_RATE)) > 0){
-		/* Perform a FFT of size b_read, with buf as input data,
-		 * fftPeak return an index of the fft retult array corresponding 
-		 * to the resulting peak frequency. */ 
-		fft_size = fft(buf, b_read, &fft_out);
-		peak_idx = fftPeak(fft_size, fft_out);
-		peak_intensity = fft_out[peak_idx];
-		peak = (freq_t)peak_idx;
-#ifdef FFT_DEBUG
-	printf("peak: %f fft_size: %d peak_intensity: %f", peak, fft_size, peak_intensity);
-#endif
+	while((b_read=read(fd, buf, WINDOW_RATE)) > 0){
+		
+		freq = getFrequency(buf, b_read, &peak); 
 	
-		/* TODO: Map the frequency intensity to the MIDI velocity 
-		 * (Is it correct?) At least to understand if any note is playing. */ 
-		if(peak_intensity < INTENSITY_THRESHOLD || 
-			(last_peak == peak /*&& last_peak_intensity >= peak_intensity TODO:map needed before*/)){ 
+		/* TODO: Map the frequency intensity to the MIDI velocity */ 
+		if(last_peak > peak && last_freq == freq){ 
 			skip = 1;
 		}
 		
 		if(skip == 0){
-			note = getNote(peak);
-			printf("Note (hex: %x, dec: %d, freq: %d)\n", note, (int)note, peak_idx); 
+			note = getNote(freq);
+			printf("Note (hex: %x, dec: %d, freq: %f)\n", note, (int)note, (float)freq); 
 			/* TODO: play the note here */	
 		}
 		
 		/* Save peak history and clean the buffers */
 		last_peak = peak;
-		last_peak_intensity = peak_intensity;
-		bzero((void *)buf, FFT_SAMPLE_RATE);
-		bzero((void *)fft_out, (size_t)fft_size);
-		peak_idx = skip = 0;
-		peak_intensity=0.0;
+		bzero((void *)buf, WINDOW_RATE);
+		skip = 0;
 	}
 	if (b_read == -1){
 		perror("read ");

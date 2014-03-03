@@ -19,15 +19,10 @@
  * along with pick-midi. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONST_H
-#define CONST_H
+#ifndef FFT_NOTE_FINDER_H
+#define FFT_NOTE_FINDER_H
 
-#define BASE_RATE		44100
-#define WINDOW_RATE 	4410
-#define MIDI_C1			24
-#define N_SEMITONES		12
-#define SAMPLE_OCTAVE_HARDLIMIT 8
-#define INTENSITY_THRESHOLD	500  /* Need to find an appropriate value */
-#define HIGH_PASS_FILTER_START 50
+/* Return the corresponding MIDI Note given a certain frequency */
+byte_t getNote(float freq);
 
 #endif

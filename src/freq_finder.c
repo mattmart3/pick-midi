@@ -19,11 +19,17 @@
  * along with pick-midi. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FFT_NOTE_FINDER_H
-#define FFT_NOTE_FINDER_H
+/* External headers */ 
+#include <stdio.h>
 
-/* Return the corresponding MIDI Note given a certain frequency */
-byte_t getNote(float freq);
+/* PickMidi Headers */
+#include "const.h"
+#include "defs.h"
 
-
-#endif
+freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
+	
+	/* TODO: implement this using the Schmitt trigger :) */
+	(*peak) = 1000; /* TODO: change this */
+	
+	return (freq_t)440;
+}
