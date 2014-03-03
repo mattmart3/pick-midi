@@ -27,7 +27,8 @@
 #define MIDI_C1			24
 #define N_SEMITONES		12
 #define SAMPLE_OCTAVE_HARDLIMIT 8
-#define INTENSITY_THRESHOLD	500  /* Need to find an appropriate value */
 #define HIGH_PASS_FILTER_START 50
+#define TRIGGER_THRESHOLD	(0xff/2)
+
 
 #endif

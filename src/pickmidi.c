@@ -43,7 +43,6 @@ int main(int argc, char **argv){
 	byte_t buf[WINDOW_RATE], 
 		note, peak, last_peak;
 	freq_t freq, last_freq;
-	
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);

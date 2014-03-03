@@ -21,15 +21,41 @@
 
 /* External headers */ 
 #include <stdio.h>
+#include <stdlib.h>
+
 
 /* PickMidi Headers */
 #include "const.h"
 #include "defs.h"
 
 freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
+	int i, cstate, tc, threshold;
+	freq_t frequency;
 	
-	/* TODO: implement this using the Schmitt trigger :) */
-	(*peak) = 1000; /* TODO: change this */
+	threshold = TRIGGER_THRESHOLD;
+	cstate = 0;
 	
-	return (freq_t)440;
+	
+	for(i = 0; i < (int)size; i++){
+		
+		if((cstate == 1) && ((buf[i]&0xff) < threshold)){
+			cstate = 0;
+			tc++;
+		}
+		
+		if(cstate == 0 && ((buf[i]&0xff) >= threshold)){
+			cstate = 1;
+			tc++;
+		}
+		/* Do not change otherwise. */ 
+	}
+	
+	(*peak) = 1000; /* TODO: change this calculating it. */
+	
+	frequency = (freq_t)((float)tc*((float)BASE_RATE/(float)size)/2.0);
+	
+	printf("%f ", frequency);
+	
+	//return frequency;
+	return 0;
 }
