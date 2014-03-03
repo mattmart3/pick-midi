@@ -53,6 +53,5 @@ freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
 	
 	frequency = (freq_t)((float)tc*((float)BASE_RATE/(float)size)/2.0);
 	
-	printf("%d %f\n", tc, frequency);
 	return frequency;
 }

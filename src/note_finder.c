@@ -30,7 +30,7 @@
 #include "const.h"
 #include "defs.h"
 
-int getOctaveFrom(double freq, int soctave)
+int getOctaveFrom(float freq, int soctave)
 {
 	float refFreq[SAMPLE_OCTAVE_HARDLIMIT]={
 		16.0		/*C0*/,
@@ -67,9 +67,26 @@ int getOctaveFrom(double freq, int soctave)
 
 int getSimilar(int ind, double *references, float ref)
 {
-	if(ref-references[ind] < 1 && ref-references[ind] > -1)
-		return ind;
-	else if(ref-references[ind] > 1)
+	float dist = ref-references[ind];
+	
+	if(dist < 1 && dist > -1){
+		dist = fabs(dist);
+		int prev_ind = ((ind-1) < 0) ? N_SEMITONES - 1 : (ind - 1);
+		int next_ind = (ind+1)%N_SEMITONES;
+		float dist_prev =  fabs(ref-references[prev_ind]);
+		float dist_next = fabs(ref-references[next_ind]);
+#ifdef GETNOTE_DEBUG
+		printf("(%d, %d, %d) ", prev_ind, ind, next_ind);
+		printf("%d (%f %f %f) ",ind, dist_prev, dist, dist_next);
+#endif
+		if (dist < dist_next && dist < dist_prev)
+			return ind;
+		else if (dist_next < dist)
+			return next_ind;
+		else
+			return prev_ind;
+	}	
+	else if(dist > 1)
 		return getSimilar(ind+1, references, ref);
 	else
 		return getSimilar(ind-1, references, ref);
