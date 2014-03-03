@@ -52,9 +52,7 @@ int main(int argc, char **argv){
 	last_peak = skip = 0;
 	
 	while((b_read=read(fd, buf, WINDOW_RATE)) > 0){
-		
 		freq = getFrequency(buf, b_read, &peak); 
-	
 		/* TODO: Map the frequency intensity to the MIDI velocity */ 
 		if(last_peak > peak && last_freq == freq){ 
 			skip = 1;
