@@ -29,12 +29,11 @@
 #include "defs.h"
 
 freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
-	int i, cstate, tc, threshold;
-	freq_t frequency;
+	int i=0, cstate=0, tc=0, threshold=0;
+	freq_t frequency=0;
 	
 	threshold = TRIGGER_THRESHOLD;
 	cstate = 0;
-	
 	
 	for(i = 0; i < (int)size; i++){
 		
@@ -50,12 +49,10 @@ freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
 		/* Do not change otherwise. */ 
 	}
 	
-	(*peak) = 1000; /* TODO: change this calculating it. */
+	(*peak) = 0xff; /* TODO: change this calculating it. */
 	
 	frequency = (freq_t)((float)tc*((float)BASE_RATE/(float)size)/2.0);
 	
-	printf("%f ", frequency);
-	
-	//return frequency;
-	return 0;
+	printf("%d %f\n", tc, frequency);
+	return frequency;
 }

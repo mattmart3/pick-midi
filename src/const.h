@@ -30,5 +30,7 @@
 #define HIGH_PASS_FILTER_START 50
 #define TRIGGER_THRESHOLD	(0xff/2)
 
+#define FREQ_C0	16.35
+#define TWELVE_RADIX_OF_TWO 1.0594630
 
 #endif
