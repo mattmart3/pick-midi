@@ -24,7 +24,7 @@
 #include <math.h>
 
 
-typedef char byte_t;
+typedef unsigned char byte_t;
 typedef float freq_t;
 
 #endif

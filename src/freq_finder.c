@@ -31,25 +31,29 @@
 freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
 	int i=0, cstate=0, tc=0, threshold=0;
 	freq_t frequency=0;
+	byte_t value = 0, tmp_peak = 0;
 	
 	threshold = TRIGGER_THRESHOLD;
 	cstate = 0;
 	
+	
 	for(i = 0; i < (int)size; i++){
+		value = buf[i] & 0xff;
+		if(value > tmp_peak )
+			tmp_peak = value;
 		
-		if((cstate == 1) && ((buf[i]&0xff) < threshold)){
+		if((cstate == 1) && (value < threshold)){
 			cstate = 0;
 			tc++;
 		}
 		
-		if(cstate == 0 && ((buf[i]&0xff) >= threshold)){
+		if(cstate == 0 && (value >= threshold)){
 			cstate = 1;
 			tc++;
 		}
 		/* Do not change otherwise. */ 
 	}
-	
-	(*peak) = 0xff; /* TODO: change this calculating it. */
+	(*peak) = tmp_peak; /* TODO: change this calculating it. */
 	
 	frequency = (freq_t)((float)tc*((float)BASE_RATE/(float)size)/2.0);
 	

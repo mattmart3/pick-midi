@@ -41,8 +41,8 @@ int main(int argc, char **argv){
 	int fd;
 	short int skip;
 	byte_t buf[WINDOW_RATE], 
-		note, peak, last_peak;
-	freq_t freq, last_freq;
+		note, last_note, peak, last_peak;
+	freq_t freq;
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
@@ -54,18 +54,17 @@ int main(int argc, char **argv){
 	while((b_read=read(fd, buf, WINDOW_RATE)) > 0){
 		freq = getFrequency(buf, b_read, &peak); 
 		/* TODO: Map the frequency intensity to the MIDI velocity */ 
-		if(last_peak > peak && last_freq == freq){ 
-			skip = 1;
-		}
 		
-		if(skip == 0){
-			note = getNote(freq);
-			printf("Note (hex: %x, dec: %d, freq: %f)\n", note, (int)note, (float)freq); 
-			/* TODO: play the note here */	
-		}
+		note = getNote(freq);
+		if ( peak <= last_peak && last_note == note )
+			;//SKIP
+		else
+			printf("Note (hex: %x, dec: %d, freq: %f, peak %x)\n", note, (int)note, (float)freq, peak); 
+		/* TODO: play the note here */	
 		
 		/* Save peak history and clean the buffers */
 		last_peak = peak;
+		last_note = note;
 		bzero((void *)buf, WINDOW_RATE);
 		skip = 0;
 	}
