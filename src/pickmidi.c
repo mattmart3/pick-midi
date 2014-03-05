@@ -57,9 +57,9 @@ int main(int argc, char **argv){
 		
 		note = getNote(freq);
 		if ( peak <= last_peak && last_note == note )
-			;//SKIP
+			printf(".");//SKIP
 		else
-			printf("Note (hex: %x, dec: %d, freq: %f, peak %x)\n", note, (int)note, (float)freq, peak); 
+			printf("\nNote (hex: %x, dec: %d, freq: %f, peak %x)", note, (int)note, (float)freq, peak); 
 		/* TODO: play the note here */	
 		
 		/* Save peak history and clean the buffers */
@@ -74,6 +74,6 @@ int main(int argc, char **argv){
 	}
 	close(fd);
 	/* TODO: read the TODO file */
-	
+	printf("\n");	
 	return 0;
 }
