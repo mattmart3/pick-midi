@@ -7,4 +7,4 @@ A guitar to MIDI converter.
 How to contribute
 =========
 
-Just fork the dev branch, do your changes and submit a pull request.
+Just fork the dev branch, make your changes and submit a pull request.
