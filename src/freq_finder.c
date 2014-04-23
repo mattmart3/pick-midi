@@ -22,47 +22,40 @@
 /* External headers */ 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <complex.h>
-#include <fftw3.h>
+
 
 /* PickMidi Headers */
 #include "const.h"
 #include "defs.h"
 
-int fft(byte_t *buf, ssize_t fft_size){
-	unsigned i=0;
-	double *in;
-	fftw_complex *out;
-	fftw_plan p1;
+freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak){
+	int i=0, cstate=0, tc=0, threshold=0;
+	freq_t frequency=0;
+	byte_t value = 0, tmp_peak = 0;
 	
-	in=(double*) fftw_malloc(sizeof(double) * fft_size);
-	out=(fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (fft_size/2+1));
-
-	for(i=0;i<fft_size;i++)
-	{
-		in[i]=(double)(buf[i]&0xff);
+	threshold = TRIGGER_THRESHOLD;
+	cstate = 0;
+	
+	
+	for(i = 0; i < (int)size; i++){
+		value = buf[i] & 0xff;
+		if(value > tmp_peak )
+			tmp_peak = value;
+		
+		if((cstate == 1) && (value < threshold)){
+			cstate = 0;
+			tc++;
+		}
+		
+		if(cstate == 0 && (value >= threshold)){
+			cstate = 1;
+			tc++;
+		}
+		/* Do not change otherwise. */ 
 	}
-
-	/* warp to the complex plane */
-	p1=fftw_plan_dft_r2c_1d(fft_size, in, out, FFTW_ESTIMATE);
-	{
-		int repeat;
-		for(repeat=0;repeat<FFT_REPETITIONS;repeat++)
-			fftw_execute(p1);
-	}
-
-	for(i=0;i<fft_size/2;i++)
-	{
-		double val=fabs(cimag(out[i])*creal(out[i]));
-		printf("%f\n", val);
-		int k;
-		for(k=0;k<FFT_BASE_RATE/FFT_SAMPLE_RATE-1;k++)
-			printf("0.0\n");
-	}
-
-	fftw_destroy_plan(p1);
-	fftw_free(out);
-	free(in);
-	return 0;
+	(*peak) = tmp_peak; /* TODO: change this calculating it. */
+	
+	frequency = (freq_t)((float)tc*((float)BASE_RATE/(float)size)/2.0);
+	
+	return frequency;
 }

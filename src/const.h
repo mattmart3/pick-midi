@@ -22,8 +22,15 @@
 #ifndef CONST_H
 #define CONST_H
 
-#define FFT_BASE_RATE	44100
-#define FFT_SAMPLE_RATE 	100
-#define FFT_REPETITIONS	1
+#define BASE_RATE		44100
+#define WINDOW_RATE 	4410
+#define MIDI_C1			24
+#define N_SEMITONES		12
+#define SAMPLE_OCTAVE_HARDLIMIT 8
+#define HIGH_PASS_FILTER_START 50
+#define TRIGGER_THRESHOLD	(0xff/2)
+
+#define FREQ_C0	16.35
+#define TWELVE_RADIX_OF_TWO 1.0594630
 
 #endif

@@ -27,34 +27,53 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <strings.h>
 
 /* PickMidi Headers */
-#include "fft.h"
 #include "const.h"
 #include "defs.h"
+#include "freq_finder.h"
+#include "note_finder.h"
 
 
 int main(int argc, char **argv){
-	ssize_t b_read=0;
+	ssize_t b_read = 0, fft_size;
 	int fd;
-	byte_t buf[FFT_SAMPLE_RATE];
-
+	short int skip;
+	byte_t buf[WINDOW_RATE], 
+		note, last_note, peak, last_peak;
+	freq_t freq;
 	if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
 	}
 	
-	if ((b_read=read(fd, buf, FFT_SAMPLE_RATE)) == -1){
+	/* Variables initialization */
+	last_peak = skip = 0;
+	
+	while((b_read=read(fd, buf, WINDOW_RATE)) > 0){
+		freq = getFrequency(buf, b_read, &peak); 
+		/* TODO: Map the frequency intensity to the MIDI velocity */ 
+		
+		note = getNote(freq);
+		if ( peak <= last_peak && last_note == note )
+			printf(".");//SKIP
+		else
+			printf("\nNote (hex: %x, dec: %d, freq: %f, peak %x)", note, (int)note, (float)freq, peak); 
+		/* TODO: play the note here */	
+		
+		/* Save peak history and clean the buffers */
+		last_peak = peak;
+		last_note = note;
+		bzero((void *)buf, WINDOW_RATE);
+		skip = 0;
+	}
+	if (b_read == -1){
 		perror("read ");
 		exit(EXIT_FAILURE);
 	}
-	
 	close(fd);
-
-	/* Perform a FFT of size b_read, with buf as input data */ 
-	fft(buf, b_read);
-	
 	/* TODO: read the TODO file */
-	
+	printf("\n");	
 	return 0;
 }

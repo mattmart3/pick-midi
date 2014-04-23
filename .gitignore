@@ -25,3 +25,8 @@
 #Vim swap files
 *.swp
 *.swo
+
+#Project dir
+data
+bin
+build

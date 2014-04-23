@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with pick-midi. If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef FREQ_FINDER_H
+#define FREQ_FINDER_H
 
-#ifndef FFT_H
-#define FFT_H
-#include "defs.h"
-
-int fft(byte_t *buf, ssize_t fft_size);
+/* Find the frequency of a certain sin wave interval.
+ * It's based on the Schmitt trigger algorithm. */
+freq_t getFrequency(byte_t *buf, ssize_t size, byte_t *peak);
 
 #endif
