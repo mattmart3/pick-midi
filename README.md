@@ -21,9 +21,10 @@ Helpers are more than welcome.
 Check the `TODO.md` file under the `dev` branch to see what we are currently working on.
 
 When you are ready to contribute, do the following steps:
+
 1. [Fork](https://help.github.com/articles/fork-a-repo) Pick Midi.
 2. Create a branch based on the `dev` branch (`git checkout -B my-awsome-feature`)
 3. Make your changes and push them to your fork
-4. Create a [pull request]((https://help.github.com/articles/using-pull-requests)
+4. Create a [pull request](https://help.github.com/articles/using-pull-requests)
 
 In case you have any questions, don't hesitate to contact us.

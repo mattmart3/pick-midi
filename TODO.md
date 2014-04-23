@@ -12,9 +12,9 @@
 
 ##Input Reading/Capturing
  * How do we get the 6 signals? 
- ** Capturing from a 6 input channels sound card?
- ** Capturing from  more then one sound card (with less then 6 input channels each)? 
- **  Through an ad-hoc device (are we able to build it)?
+ 	* Capturing from a 6 input channels sound card?
+ 	* Capturing from  more then one sound card (with less then 6 input channels each)? 
+ 	* Through an ad-hoc device (are we able to build it)?
  * Do the Concurrency part reading the actual signals from the multi-channels pickup.
 
 ##Testing
