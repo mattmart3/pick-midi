@@ -35,15 +35,35 @@
 #include "freq_finder.h"
 #include "note_finder.h"
 
+int play_note(byte_t note, byte_t prev_note, int fd)
+{
+	unsigned char data[3] = {0x80, prev_note, 120};
+	write(fd, data, sizeof(data));
+	data[0] = 0x90;
+	data[1] = note;
+	write(fd, data, sizeof(data));
+}
 
 int main(int argc, char **argv){
 	ssize_t b_read = 0, fft_size;
 	int fd;
 	short int skip;
+	
+
+	char* device =  "/dev/snd/midiC1D0" ;
+	int midifd = open(device, O_WRONLY, 0);
+	
+	if (midifd < 0) {
+      		printf("Error: cannot open %s\n", device);
+      		exit(1);
+	}
+	
 	byte_t buf[WINDOW_RATE], 
 		note, last_note, peak, last_peak;
 	freq_t freq;
-	if ((fd = open(argv[1], O_RDONLY)) == -1){
+	if (!strcmp(argv[1], "-")) {
+		fd = 0;
+        } else if ((fd = open(argv[1], O_RDONLY)) == -1){
 		perror("open ");
 		exit(EXIT_FAILURE);
 	}
@@ -52,6 +72,7 @@ int main(int argc, char **argv){
 	last_peak = skip = 0;
 	
 	while((b_read=read(fd, buf, WINDOW_RATE)) > 0){
+		usleep(100000); //XXX:debug
 		freq = getFrequency(buf, b_read, &peak); 
 		/* TODO: Map the frequency intensity to the MIDI velocity */ 
 		
@@ -59,9 +80,10 @@ int main(int argc, char **argv){
 		if ( peak <= last_peak && last_note == note )
 			printf(".");//SKIP
 		else
-			printf("\nNote (hex: %x, dec: %d, freq: %f, peak %x)", note, (int)note, (float)freq, peak); 
+			printf("\nNote (hex: %x, dec: %d, freq: %f, peak %x)", 
+					note, (int)note, (float)freq, peak); 
 		/* TODO: play the note here */	
-		
+		play_note(note, last_note, midifd);	
 		/* Save peak history and clean the buffers */
 		last_peak = peak;
 		last_note = note;

@@ -40,7 +40,9 @@ int getOctaveFrom(float freq, int soctave)
 		256.0		/*C4*/,
 		512.0		/*C5*/,
 		1024.0		/*C6*/,
-		2048.0		/*C7*/
+		2048.0		/*C7*/,
+		4096.0		/*C8*/,
+		8192.0		/*C9*/
 	};
 	float refFreqStart, refFreqStop;
 	if(soctave<SAMPLE_OCTAVE_HARDLIMIT)
@@ -66,12 +68,14 @@ int getOctaveFrom(float freq, int soctave)
 
 int getSimilar(int ind, float *references, float ref, int iter)
 {
+	//TODO: study this function for REAL, and re-write it
 	int prev_ind, next_ind;
 	float sign_dist, dist, dist_prev, dist_next;
 	
 	if (iter > N_SEMITONES){
 		fprintf(stderr, "Error in getSimilar");
-		exit(EXIT_FAILURE);
+		return ind; //TODO: this is wrong!
+		//exit(EXIT_FAILURE);
 	}
 	
 	prev_ind = ((ind-1) < 0) ? N_SEMITONES - 1 : (ind - 1);
@@ -81,9 +85,14 @@ int getSimilar(int ind, float *references, float ref, int iter)
 	dist_prev =  fabs(ref-references[prev_ind]);
 	dist_next = fabs(ref-references[next_ind]);
 	
-	if(dist < dist_prev && dist < dist_next)
+	/*printf("i:%d pi:%d ni:%d sd:%f absd:%f dp:%f dn:%f\n",
+		ind, prev_ind, next_ind, sign_dist, dist, dist_prev, dist_next);
+	*/
+	//XXX: 0.05 and 0.9 (was 1.0 before) 
+	//without no sense, just a debug tolerance
+	if(dist < dist_prev && dist < (dist_next + 0.05))  
 		return ind;	
-	else if(sign_dist > 1)
+	else if(sign_dist > 0.9)
 		return getSimilar(next_ind, references, ref, iter+1);
 	else
 		return getSimilar(prev_ind, references, ref, iter+1);
