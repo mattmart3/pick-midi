@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#TODO: add usage if -h (--help) argument is provided 
+#TODO: add usage if -h (--help) argument is provided
 #Usage: PickMidi [BIN_DIR] [PICKMIDI_HOME_DIR] [BUILD_DIR]
 
 #TODO: Provide a clean option ( is there any cmake clean option we can use here? )
